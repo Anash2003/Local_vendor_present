@@ -1,0 +1,43 @@
+{% extends 'customer/customer_base.html' %}
+
+{% block title %}Browse Vendors - LocalVendor{% endblock %}
+
+{% block content %}
+<div class="action-row">
+    <div>
+        <h2>Verified Local Vendors</h2>
+        <p style="color: var(--text-muted);">Connect with approved service providers in your region</p>
+    </div>
+</div>
+
+<form method="GET" class="filter-bar">
+    <input type="text" name="search" class="form-input" placeholder="Search by business name..." value="{{ search }}">
+    <input type="text" name="city" class="form-input" placeholder="Filter by city..." value="{{ city }}">
+    <button type="submit" class="btn btn-primary">Filter</button>
+    {% if search or city %}
+        <a href="{% url 'customer:browse_vendors' %}" class="btn btn-secondary">Clear</a>
+    {% endif %}
+</form>
+
+{% if vendors %}
+<div class="cards-grid">
+    {% for v in vendors %}
+    <div class="card">
+        <h3 class="card-title">{{ v.business_name }}</h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px;">📍 {{ v.city }}, {{ v.state }}</p>
+        <p class="card-text">{{ v.business_description|truncatewords:20|default:"No description provided." }}</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+            <span class="status-pill status-approved">Verified</span>
+            <a href="{% url 'customer:vendor_detail' v.id %}" class="btn btn-primary btn-sm">View Profile & Services</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card" style="text-align: center; padding: 40px; color: var(--text-muted);">
+    <h3>No vendors found matching your criteria.</h3>
+    <p>Try searching with another keyword or location.</p>
+</div>
+{% endif %}
+{% endblock %}
+

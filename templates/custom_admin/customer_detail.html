@@ -1,0 +1,83 @@
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}Customer #{{ customer.id }} Details - Control Center{% endblock %}
+
+{% block admin_body %}
+<div class="card" style="margin-bottom: 25px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px;">
+        <div>
+            <h2>{{ customer.user.get_full_name|default:customer.user.username }}</h2>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Joined on {{ customer.created_at|date:"M d, Y" }} &bull; Username: {{ customer.user.username }}</span>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <a href="{% url 'custom_admin:customer_edit' customer.id %}" class="btn btn-secondary btn-sm">Edit Info</a>
+            <form method="POST" action="{% url 'custom_admin:toggle_customer_status' customer.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-{% if customer.is_active_customer %}danger{% else %}success{% endif %} btn-sm">
+                    {% if customer.is_active_customer %}Deactivate Account{% else %}Activate Account{% endif %}
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="profile-field">
+        <span class="field-name">Account Status:</span>
+        <span class="field-value">
+            {% if customer.is_active_customer %}
+                <span class="status-pill status-active">Active</span>
+            {% else %}
+                <span class="status-pill status-inactive">Deactivated</span>
+            {% endif %}
+        </span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Email:</span>
+        <span class="field-value">{{ customer.user.email }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Phone:</span>
+        <span class="field-value">{{ customer.phone|default:"Not provided" }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Address:</span>
+        <span class="field-value">{{ customer.address|default:"Not provided" }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">City, State, PIN:</span>
+        <span class="field-value">{{ customer.city }}, {{ customer.state }} - {{ customer.pincode }}</span>
+    </div>
+</div>
+
+<div class="card">
+    <h3 class="card-title">Bookings Placed by Customer</h3>
+    {% if bookings %}
+    <div class="table-responsive" style="margin-top: 15px;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Vendor</th>
+                    <th>Service</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for b in bookings %}
+                <tr>
+                    <td>#{{ b.id }}</td>
+                    <td>{{ b.vendor.business_name }}</td>
+                    <td>{{ b.service.name }}</td>
+                    <td>{{ b.booking_date }} at {{ b.booking_time|time:"g:i A" }}</td>
+                    <td><span class="status-pill status-{{ b.status }}">{{ b.status }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p style="color: var(--text-muted); margin-top: 15px;">No bookings recorded for this customer.</p>
+    {% endif %}
+</div>
+{% endblock %}
+

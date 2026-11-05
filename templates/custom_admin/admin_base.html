@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+{% endblock %}
+
+{% block navbar %}
+<nav class="site-nav">
+    <div class="container nav-container">
+        <a href="{% url 'custom_admin:dashboard' %}" class="brand">
+            <span>🛡️ LocalVendor</span>
+            <span class="brand-badge admin">Administration</span>
+        </a>
+        <div class="nav-actions">
+            <span style="font-size: 0.9rem; color: var(--text-muted); margin-right: 10px;">Logged as <strong>{{ user.username }}</strong></span>
+            <a href="{% url 'accounts:logout' %}" class="btn btn-danger btn-sm">Logout</a>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <ul class="sidebar-menu">
+            <li class="sidebar-item"><a href="{% url 'custom_admin:dashboard' %}">📊 Dashboard</a></li>
+            <li class="sidebar-item"><a href="{% url 'custom_admin:pending_vendors' %}">⏳ Pending Approvals</a></li>
+            <li class="sidebar-item"><a href="{% url 'custom_admin:vendor_list' %}">🏪 All Vendors</a></li>
+            <li class="sidebar-item"><a href="{% url 'custom_admin:customer_list' %}">👥 Customers</a></li>
+            <li class="sidebar-item"><a href="{% url 'custom_admin:booking_list' %}">📅 Bookings</a></li>
+            <li class="sidebar-item"><a href="{% url 'custom_admin:service_list' %}">🛠️ Services</a></li>
+            <li class="sidebar-item"><a href="{% url 'custom_admin:service_categories' %}">📂 Categories</a></li>
+            <li class="sidebar-item"><a href="{% url 'custom_admin:availability_list' %}">🕒 Availabilities</a></li>
+        </ul>
+    </aside>
+    <section class="admin-content">
+        {% block admin_body %}{% endblock %}
+    </section>
+</div>
+{% endblock %}
+

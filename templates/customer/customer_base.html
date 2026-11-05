@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/customer.css' %}">
+{% endblock %}
+
+{% block navbar %}
+<nav class="site-nav">
+    <div class="container nav-container">
+        <a href="{% url 'customer:dashboard' %}" class="brand">
+            <span>📍 LocalVendor</span>
+            <span class="brand-badge customer">Customer</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="{% url 'customer:dashboard' %}" class="nav-link">Dashboard</a></li>
+            <li><a href="{% url 'customer:browse_services' %}" class="nav-link">Available Services</a></li>
+            <li><a href="{% url 'customer:browse_vendors' %}" class="nav-link">Vendors</a></li>
+            <li><a href="{% url 'customer:my_bookings' %}" class="nav-link">My Bookings</a></li>
+        </ul>
+        <div class="nav-actions">
+            <a href="{% url 'customer:profile' %}" class="btn btn-secondary btn-sm">My Profile</a>
+            <a href="{% url 'accounts:logout' %}" class="btn btn-danger btn-sm">Logout</a>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+

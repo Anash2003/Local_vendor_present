@@ -1,0 +1,57 @@
+{% extends 'customer/customer_base.html' %}
+
+{% block title %}Book {{ service.name }} - LocalVendor{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper" style="padding: 10px 0;">
+    <div class="auth-card" style="max-width: 650px;">
+        <div class="auth-header">
+            <h2 class="auth-title">Book Service</h2>
+            <p class="auth-subtitle">{{ service.name }} by <strong>{{ service.vendor.business_name }}</strong></p>
+        </div>
+
+        <div style="background: var(--bg-main); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 15px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                <span>Service Price:</span>
+                <strong>₹{{ service.price }}</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                <span>Estimated Duration:</span>
+                <span>{{ service.duration_minutes }} Minutes</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <span>Location:</span>
+                <span>{{ service.vendor.city }}, {{ service.vendor.state }}</span>
+            </div>
+        </div>
+
+        <form method="POST" action="{% url 'customer:book_service' service.id %}">
+            {% csrf_token %}
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Preferred Date *</label>
+                    {{ form.booking_date }}
+                    {% if form.booking_date.errors %}<div class="form-help" style="color:var(--danger)">{{ form.booking_date.errors.0 }}</div>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Preferred Time *</label>
+                    {{ form.booking_time }}
+                    {% if form.booking_time.errors %}<div class="form-help" style="color:var(--danger)">{{ form.booking_time.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Special Notes / Address Instructions</label>
+                {{ form.notes }}
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <a href="{% url 'customer:vendor_detail' service.vendor.id %}" class="btn btn-secondary" style="flex: 1;">Cancel</a>
+                <button type="submit" class="btn btn-primary" style="flex: 2;">Confirm Booking Request</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+

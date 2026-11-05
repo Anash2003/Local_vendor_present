@@ -1,0 +1,40 @@
+/* Vendor Stylesheet */
+.vendor-header {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    padding: 24px;
+    border-radius: var(--radius-md);
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.vendor-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.action-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.day-badge {
+    font-weight: 600;
+    text-transform: capitalize;
+    color: var(--primary);
+}
+
+.reason-box {
+    background: #fff1f2;
+    border-left: 4px solid var(--danger);
+    padding: 12px;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #9f1239;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+

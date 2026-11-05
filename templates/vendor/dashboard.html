@@ -1,0 +1,80 @@
+{% extends 'vendor/vendor_base.html' %}
+
+{% block title %}Vendor Dashboard - LocalVendor{% endblock %}
+
+{% block content %}
+<div class="vendor-header">
+    <div>
+        <h1 class="vendor-title">{{ vendor.business_name }}</h1>
+        <p style="color: var(--text-muted); margin-top: 4px;">Verified Vendor Partner &bull; {{ vendor.city }}, {{ vendor.state }}</p>
+    </div>
+    <div style="display: flex; gap: 10px;">
+        <a href="{% url 'vendor:add_service' %}" class="btn btn-primary">+ Add New Service</a>
+        <a href="{% url 'vendor:availability' %}" class="btn btn-secondary">Set Availability</a>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <span class="stat-label">Total Services Offered</span>
+        <span class="stat-value">{{ total_services }}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Pending Bookings</span>
+        <span class="stat-value" style="color: var(--warning);">{{ pending_bookings }}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Upcoming Jobs</span>
+        <span class="stat-value" style="color: var(--primary);">{{ upcoming_bookings_count }}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Total Completed</span>
+        <span class="stat-value" style="color: var(--success);">{{ completed_bookings }}</span>
+    </div>
+</div>
+
+<div class="card" style="margin-top: 25px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 class="card-title" style="margin-bottom: 0;">Recent Orders & Bookings</h3>
+        <a href="{% url 'vendor:received_bookings' %}" class="btn btn-secondary btn-sm">Review Pending Requests</a>
+    </div>
+
+    {% if recent_bookings %}
+    <div class="table-responsive" style="margin-top: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Customer Name</th>
+                    <th>Service Requested</th>
+                    <th>Scheduled Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for b in recent_bookings %}
+                <tr>
+                    <td>#{{ b.id }}</td>
+                    <td><strong>{{ b.customer.user.get_full_name|default:b.customer.user.username }}</strong></td>
+                    <td>{{ b.service.name }}</td>
+                    <td>{{ b.booking_date }} at {{ b.booking_time|time:"g:i A" }}</td>
+                    <td>
+                        <span class="status-pill status-{{ b.status }}">{{ b.get_status_display }}</span>
+                    </td>
+                    <td>
+                        <a href="{% url 'vendor:booking_detail' b.id %}" class="btn btn-secondary btn-sm">Details</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="card-text" style="text-align: center; padding: 30px; color: var(--text-muted);">
+        No recent bookings received yet. Ensure your services and weekly availability are published!
+    </p>
+    {% endif %}
+</div>
+{% endblock %}
+

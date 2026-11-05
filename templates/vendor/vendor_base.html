@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/vendor.css' %}">
+{% endblock %}
+
+{% block navbar %}
+<nav class="site-nav">
+    <div class="container nav-container">
+        <a href="{% url 'vendor:dashboard' %}" class="brand">
+            <span>📍 LocalVendor</span>
+            <span class="brand-badge vendor">Vendor Partner</span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="{% url 'vendor:dashboard' %}" class="nav-link">Dashboard</a></li>
+            <li><a href="{% url 'vendor:my_services' %}" class="nav-link">My Services</a></li>
+            <li><a href="{% url 'vendor:availability' %}" class="nav-link">Availability</a></li>
+            <li><a href="{% url 'vendor:received_bookings' %}" class="nav-link">Received Bookings</a></li>
+            <li><a href="{% url 'vendor:upcoming_bookings' %}" class="nav-link">Upcoming Bookings</a></li>
+        </ul>
+        <div class="nav-actions">
+            <a href="{% url 'vendor:profile' %}" class="btn btn-secondary btn-sm">My Profile</a>
+            <a href="{% url 'accounts:logout' %}" class="btn btn-danger btn-sm">Logout</a>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+

@@ -1,0 +1,46 @@
+{% extends 'vendor/vendor_base.html' %}
+
+{% block title %}Vendor Profile - LocalVendor{% endblock %}
+
+{% block content %}
+<div class="profile-card">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px;">
+        <h2>Vendor Profile & Business Details</h2>
+        <a href="{% url 'vendor:edit_profile' %}" class="btn btn-primary btn-sm">Edit Information</a>
+    </div>
+
+    <div class="profile-field">
+        <span class="field-name">Business Name:</span>
+        <span class="field-value"><strong>{{ vendor.business_name }}</strong></span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Verification Status:</span>
+        <span class="field-value"><span class="status-pill status-{{ vendor.verification_status }}">{{ vendor.get_verification_status_display }}</span></span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Owner Name:</span>
+        <span class="field-value">{{ user.get_full_name }} ({{ user.username }})</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Contact Phone:</span>
+        <span class="field-value">{{ vendor.phone }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Email:</span>
+        <span class="field-value">{{ user.email }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Business Address:</span>
+        <span class="field-value">{{ vendor.business_address }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">City, State, PIN:</span>
+        <span class="field-value">{{ vendor.city }}, {{ vendor.state }} - {{ vendor.pincode }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Description:</span>
+        <span class="field-value">{{ vendor.business_description|linebreaksbr|default:"No description." }}</span>
+    </div>
+</div>
+{% endblock %}
+

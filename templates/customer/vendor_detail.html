@@ -1,0 +1,60 @@
+{% extends 'customer/customer_base.html' %}
+
+{% block title %}{{ vendor.business_name }} - LocalVendor{% endblock %}
+
+{% block content %}
+<div class="card" style="margin-bottom: 25px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px;">
+        <div>
+            <h2>{{ vendor.business_name }} <span class="status-pill status-approved">Verified Partner</span></h2>
+            <p style="color: var(--text-muted); margin-top: 4px;">Owner: {{ vendor.user.get_full_name }} &bull; Contact: {{ vendor.phone }}</p>
+            <p style="margin-top: 6px;">📍 {{ vendor.business_address }}, {{ vendor.city }}, {{ vendor.state }} - {{ vendor.pincode }}</p>
+        </div>
+        <a href="{% url 'customer:browse_vendors' %}" class="btn btn-secondary btn-sm">&larr; Back to Vendors</a>
+    </div>
+    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border);">
+        <strong>About:</strong>
+        <p style="color: var(--secondary); margin-top: 5px;">{{ vendor.business_description|linebreaksbr|default:"No detailed description provided." }}</p>
+    </div>
+</div>
+
+<div class="card" style="margin-bottom: 25px;">
+    <h3 class="card-title">Weekly Working Hours & Availability</h3>
+    {% if availability %}
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px;">
+            {% for a in availability %}
+            <div style="background: var(--bg-main); padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+                <div class="day-badge">{{ a.get_day_of_week_display }}</div>
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+                    {{ a.start_time|time:"g:i A" }} - {{ a.end_time|time:"g:i A" }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="color: var(--text-muted); margin-top: 10px;">The vendor has not published specific availability timings yet.</p>
+    {% endif %}
+</div>
+
+<h3>Offered Services</h3>
+{% if services %}
+<div class="cards-grid">
+    {% for s in services %}
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <h4 style="font-size: 1.1rem;">{{ s.name }}</h4>
+            <span style="font-weight: 700; color: var(--primary); font-size: 1.1rem;">₹{{ s.price }}</span>
+        </div>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 4px 0 10px 0;">Category: {{ s.category.name }} &bull; Est. Duration: {{ s.duration_minutes }} mins</p>
+        <p class="card-text">{{ s.description }}</p>
+        <a href="{% url 'customer:book_service' s.id %}" class="btn btn-primary btn-block">Book This Service</a>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card" style="padding: 25px; text-align: center; color: var(--text-muted);">
+    No active services listed by this vendor right now.
+</div>
+{% endif %}
+{% endblock %}
+

@@ -1,0 +1,90 @@
+{% extends 'vendor/vendor_base.html' %}
+
+{% block title %}Manage Availability - LocalVendor{% endblock %}
+
+{% block content %}
+<div class="action-row">
+    <div>
+        <h2>Weekly Availability & Working Hours</h2>
+        <p style="color: var(--text-muted);">Set your working schedule so customers can book appointments only when you're free</p>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; align-items: start;">
+    <!-- Add or Update Form -->
+    <div class="card">
+        <h3 class="card-title">Add / Update Day Schedule</h3>
+        <p class="card-text">Select a day and define your working window</p>
+
+        <form method="POST" action="{% url 'vendor:availability' %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label">Day of Week *</label>
+                {{ form.day_of_week }}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Start Time *</label>
+                    {{ form.start_time }}
+                    {% if form.start_time.errors %}<div class="form-help" style="color:var(--danger)">{{ form.start_time.errors.0 }}</div>{% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">End Time *</label>
+                    {{ form.end_time }}
+                    {% if form.end_time.errors %}<div class="form-help" style="color:var(--danger)">{{ form.end_time.errors.0 }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+                {{ form.is_available }}
+                <label class="form-label" style="margin-bottom: 0;">Mark as Open / Available</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" style="margin-top: 15px;">Save Schedule</button>
+        </form>
+    </div>
+
+    <!-- Active Schedules Table -->
+    <div class="card">
+        <h3 class="card-title">Configured Working Days</h3>
+        {% if current_availability %}
+        <div class="table-responsive" style="margin-top: 15px;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Hours</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for a in current_availability %}
+                    <tr>
+                        <td><span class="day-badge">{{ a.get_day_of_week_display }}</span></td>
+                        <td>
+                            {% if a.is_available %}
+                                {{ a.start_time|time:"g:i A" }} - {{ a.end_time|time:"g:i A" }}
+                            {% else %}
+                                <span class="status-pill status-inactive">Closed</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form method="POST" action="{% url 'vendor:delete_availability' a.id %}" onsubmit="return confirm('Remove schedule for this day?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p style="color: var(--text-muted); margin-top: 20px;">No days added yet. Use the form on the left to set up your weekly timings.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

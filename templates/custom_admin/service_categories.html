@@ -1,0 +1,79 @@
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}Service Categories - Control Center{% endblock %}
+
+{% block admin_body %}
+<div class="action-row">
+    <div>
+        <h2>Service Categories</h2>
+        <p style="color: var(--text-muted);">Configure standard categories available for vendors to list services under</p>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 25px; align-items: start;">
+    <!-- Add Category Form -->
+    <div class="card">
+        <h3 class="card-title">Add Category</h3>
+        <form method="POST" action="{% url 'custom_admin:add_category' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label">Category Name *</label>
+                {{ form.name }}
+            </div>
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                {{ form.description }}
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" style="margin-top: 15px;">+ Create Category</button>
+        </form>
+    </div>
+
+    <!-- Category Table -->
+    <div class="card">
+        <h3 class="card-title">Active Categories</h3>
+        {% if categories %}
+        <div class="table-responsive" style="margin-top: 15px;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cat in categories %}
+                    <tr>
+                        <td><strong>{{ cat.name }}</strong></td>
+                        <td>{{ cat.description|truncatewords:8|default:"-" }}</td>
+                        <td>
+                            {% if cat.is_active %}
+                                <span class="status-pill status-active">Active</span>
+                            {% else %}
+                                <span class="status-pill status-inactive">Disabled</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 8px;">
+                                <a href="{% url 'custom_admin:edit_category' cat.id %}" class="btn btn-secondary btn-sm">Edit</a>
+                                <form method="POST" action="{% url 'custom_admin:toggle_category_status' cat.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-{% if cat.is_active %}danger{% else %}success{% endif %} btn-sm">
+                                        {% if cat.is_active %}Disable{% else %}Enable{% endif %}
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p style="color: var(--text-muted); margin-top: 20px;">No categories configured yet. Add your first above.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

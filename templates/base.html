@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Local Vendor Connecting App{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    {% block navbar %}
+    <nav class="site-nav">
+        <div class="container nav-container">
+            <a href="{% url 'home' %}" class="brand">
+                <span>📍 LocalVendor</span>
+            </a>
+            <div class="nav-actions">
+                {% if user.is_authenticated %}
+                    {% if user.user_type == 'customer' %}
+                        <a href="{% url 'customer:dashboard' %}" class="btn btn-secondary btn-sm">Dashboard</a>
+                    {% elif user.user_type == 'vendor' %}
+                        <a href="{% url 'vendor:dashboard' %}" class="btn btn-secondary btn-sm">Dashboard</a>
+                    {% elif user.user_type == 'admin' %}
+                        <a href="{% url 'custom_admin:dashboard' %}" class="btn btn-secondary btn-sm">Admin Panel</a>
+                    {% endif %}
+                    <a href="{% url 'accounts:logout' %}" class="btn btn-danger btn-sm">Logout</a>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="btn btn-secondary btn-sm">Login</a>
+                    <a href="{% url 'accounts:customer_register' %}" class="btn btn-primary btn-sm">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    {% endblock %}
+
+    <!-- Main Container & Alerts -->
+    <main class="main-wrapper">
+        <div class="container">
+            {% if messages %}
+                <div class="messages-container">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            <span>{{ message }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block content %}
+            {% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 Local Vendor Connecting App. Built with Django MVT.</p>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+

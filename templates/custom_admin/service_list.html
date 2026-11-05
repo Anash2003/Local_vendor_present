@@ -1,0 +1,64 @@
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}Manage Platform Services - Control Center{% endblock %}
+
+{% block admin_body %}
+<div class="action-row">
+    <div>
+        <h2>Master Platform Services</h2>
+        <p style="color: var(--text-muted);">Overview of all services published across all registered vendors</p>
+    </div>
+</div>
+
+<form method="GET" class="filter-bar">
+    <select name="category" class="form-select" onchange="this.form.submit()">
+        <option value="">All Categories</option>
+        {% for c in categories %}
+            <option value="{{ c.id }}" {% if selected_category == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
+        {% endfor %}
+    </select>
+    {% if selected_category %}
+        <a href="{% url 'custom_admin:service_list' %}" class="btn btn-secondary btn-sm">Reset</a>
+    {% endif %}
+</form>
+
+{% if services %}
+<div class="table-responsive">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Service Name</th>
+                <th>Category</th>
+                <th>Vendor</th>
+                <th>Price</th>
+                <th>Duration</th>
+                <th>Availability</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in services %}
+            <tr>
+                <td><strong>{{ s.name }}</strong></td>
+                <td>{{ s.category.name }}</td>
+                <td><a href="{% url 'custom_admin:vendor_detail' s.vendor.id %}">{{ s.vendor.business_name }}</a></td>
+                <td>₹{{ s.price }}</td>
+                <td>{{ s.duration_minutes }} mins</td>
+                <td>
+                    {% if s.is_available %}
+                        <span class="status-pill status-active">Live</span>
+                    {% else %}
+                        <span class="status-pill status-inactive">Hidden</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="card" style="text-align: center; padding: 40px; color: var(--text-muted);">
+    <h3>No services found.</h3>
+</div>
+{% endif %}
+{% endblock %}
+

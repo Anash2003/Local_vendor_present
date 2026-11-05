@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h2 class="auth-title">Welcome Back</h2>
+            <p class="auth-subtitle">Sign in to your account</p>
+        </div>
+
+        <form method="POST" action="{% url 'accounts:login' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label" for="id_username">Username</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="form-help" style="color: var(--danger);">{{ form.username.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="id_password">Password</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                    <div class="form-help" style="color: var(--danger);">{{ form.password.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" style="margin-top: 10px;">Login</button>
+        </form>
+
+        <div class="auth-footer">
+            Don't have an account? <br>
+            <a href="{% url 'accounts:customer_register' %}">Register as Customer</a> &bull; 
+            <a href="{% url 'accounts:vendor_register' %}">Register as Vendor</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

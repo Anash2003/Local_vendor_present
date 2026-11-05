@@ -1,0 +1,64 @@
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}Manage Customers - Control Center{% endblock %}
+
+{% block admin_body %}
+<div class="action-row">
+    <div>
+        <h2>Customer Management</h2>
+        <p style="color: var(--text-muted);">View and manage all registered customer accounts</p>
+    </div>
+</div>
+
+<form method="GET" class="filter-bar">
+    <input type="text" name="search" class="form-input" placeholder="Search by customer username..." value="{{ search }}">
+    <button type="submit" class="btn btn-primary">Search</button>
+    {% if search %}
+        <a href="{% url 'custom_admin:customer_list' %}" class="btn btn-secondary">Reset</a>
+    {% endif %}
+</form>
+
+{% if customers %}
+<div class="table-responsive">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>City</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in customers %}
+            <tr>
+                <td>#{{ c.id }}</td>
+                <td><strong>{{ c.user.username }}</strong></td>
+                <td>{{ c.user.get_full_name|default:"-" }}</td>
+                <td>{{ c.user.email }}</td>
+                <td>{{ c.city|default:"-" }}</td>
+                <td>
+                    {% if c.is_active_customer %}
+                        <span class="status-pill status-active">Active</span>
+                    {% else %}
+                        <span class="status-pill status-inactive">Deactivated</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'custom_admin:customer_detail' c.id %}" class="btn btn-secondary btn-sm">Manage</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="card" style="text-align: center; padding: 40px; color: var(--text-muted);">
+    <h3>No customer accounts found.</h3>
+</div>
+{% endif %}
+{% endblock %}
+

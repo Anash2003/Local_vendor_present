@@ -1,0 +1,46 @@
+{% extends 'customer/customer_base.html' %}
+
+{% block title %}My Profile - LocalVendor{% endblock %}
+
+{% block content %}
+<div class="profile-card">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px;">
+        <h2>My Personal Profile</h2>
+        <a href="{% url 'customer:edit_profile' %}" class="btn btn-primary btn-sm">Edit Profile</a>
+    </div>
+
+    <div class="profile-field">
+        <span class="field-name">Username:</span>
+        <span class="field-value">{{ user.username }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Full Name:</span>
+        <span class="field-value">{{ user.get_full_name|default:"Not specified" }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Email:</span>
+        <span class="field-value">{{ user.email }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Phone:</span>
+        <span class="field-value">{{ profile.phone|default:"Not provided" }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Address:</span>
+        <span class="field-value">{{ profile.address|default:"Not provided" }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">City & State:</span>
+        <span class="field-value">{{ profile.city }}, {{ profile.state }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Pincode:</span>
+        <span class="field-value">{{ profile.pincode }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Member Since:</span>
+        <span class="field-value">{{ profile.created_at|date:"F d, Y" }}</span>
+    </div>
+</div>
+{% endblock %}
+

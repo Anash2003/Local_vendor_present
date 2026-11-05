@@ -1,0 +1,86 @@
+{% extends 'vendor/vendor_base.html' %}
+
+{% block title %}Manage Booking #{{ booking.id }} - LocalVendor{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 750px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px;">
+        <div>
+            <h2>Booking Order #{{ booking.id }}</h2>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Placed on {{ booking.created_at|date:"M d, Y" }}</span>
+        </div>
+        <span class="status-pill status-{{ booking.status }}" style="font-size: 0.95rem; padding: 6px 14px;">
+            {{ booking.get_status_display }}
+        </span>
+    </div>
+
+    <div class="profile-field">
+        <span class="field-name">Customer:</span>
+        <span class="field-value"><strong>{{ booking.customer.user.get_full_name|default:booking.customer.user.username }}</strong></span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Phone:</span>
+        <span class="field-value">{{ booking.customer.phone }} &bull; {{ booking.customer.user.email }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Customer Address:</span>
+        <span class="field-value">{{ booking.customer.address }}, {{ booking.customer.city }}, {{ booking.customer.state }} - {{ booking.customer.pincode }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Requested Service:</span>
+        <span class="field-value"><strong>{{ booking.service.name }}</strong> (Price: ₹{{ booking.service.price }})</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Appointment Time:</span>
+        <span class="field-value">{{ booking.booking_date }} at {{ booking.booking_time|time:"g:i A" }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Client Notes:</span>
+        <span class="field-value">{{ booking.notes|default:"None" }}</span>
+    </div>
+
+    {% if booking.status == 'rejected' and booking.rejection_reason %}
+    <div class="reason-box" style="margin-top: 15px;">
+        <strong>Your Rejection Reason:</strong>
+        <p>{{ booking.rejection_reason }}</p>
+    </div>
+    {% endif %}
+
+    <!-- Action Bar for Vendor Status Transitions -->
+    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border);">
+        {% if booking.status == 'pending' %}
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <form method="POST" action="{% url 'vendor:accept_booking' booking.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">Accept Booking Request</button>
+            </form>
+
+            <button type="button" class="btn btn-danger" onclick="document.getElementById('reject-form-box').style.display='block'">Reject with Reason</button>
+        </div>
+
+        <div id="reject-form-box" style="display: none; margin-top: 15px; background: var(--bg-main); padding: 15px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+            <form method="POST" action="{% url 'vendor:reject_booking' booking.id %}">
+                {% csrf_token %}
+                <label class="form-label">Reason for rejection (shared with customer):</label>
+                <textarea name="rejection_reason" class="form-textarea" rows="3" required placeholder="e.g. Schedule clash, outside service area..."></textarea>
+                <div style="margin-top: 10px; display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-danger btn-sm">Confirm Rejection</button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('reject-form-box').style.display='none'">Dismiss</button>
+                </div>
+            </form>
+        </div>
+
+        {% elif booking.status == 'confirmed' %}
+        <form method="POST" action="{% url 'vendor:complete_booking' booking.id %}" onsubmit="return confirm('Confirm that service has been completed?');">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">Mark Job as Completed</button>
+        </form>
+        {% endif %}
+
+        <div style="margin-top: 20px;">
+            <a href="{% url 'vendor:received_bookings' %}" class="btn btn-secondary btn-sm">&larr; Back to Received Bookings</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

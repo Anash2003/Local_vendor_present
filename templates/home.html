@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+.landing-hero {
+    text-align: center;
+    padding: 60px 20px;
+    background: linear-gradient(180deg, #eff6ff 0%, #f8fafc 100%);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    margin-bottom: 40px;
+}
+.landing-hero h1 {
+    font-size: 2.8rem;
+    color: var(--text-main);
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+}
+.landing-hero p {
+    font-size: 1.2rem;
+    color: var(--secondary);
+    max-width: 650px;
+    margin: 0 auto 30px auto;
+}
+.hero-cta {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+.feature-box {
+    text-align: center;
+    padding: 24px;
+}
+.feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="landing-hero">
+    <h1>Find Trusted Local Services Near You</h1>
+    <p>Connecting verified service professionals, technicians, and local vendors directly with customers in your neighborhood.</p>
+    <div class="hero-cta">
+        <a href="{% url 'accounts:customer_register' %}" class="btn btn-primary" style="padding: 12px 28px; font-size: 1.05rem;">Book a Service</a>
+        <a href="{% url 'accounts:vendor_register' %}" class="btn btn-secondary" style="padding: 12px 28px; font-size: 1.05rem;">Join as a Vendor</a>
+    </div>
+</div>
+
+<div class="cards-grid">
+    <div class="card feature-box">
+        <div class="feature-icon">🔍</div>
+        <h3 class="card-title">Browse Verified Vendors</h3>
+        <p class="card-text">Explore trusted professionals verified by our admin team with authentic government documents.</p>
+    </div>
+    <div class="card feature-box">
+        <div class="feature-icon">⚡</div>
+        <h3 class="card-title">Hassle-Free Booking</h3>
+        <p class="card-text">Select your preferred date, pick available working hours, and get instant booking confirmations.</p>
+    </div>
+    <div class="card feature-box">
+        <div class="feature-icon">💼</div>
+        <h3 class="card-title">Grow Your Business</h3>
+        <p class="card-text">Vendors get a full dashboard to showcase their services, set schedules, and manage incoming orders.</p>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,62 @@
+{% extends 'customer/customer_base.html' %}
+
+{% block title %}Booking #{{ booking.id }} - LocalVendor{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 750px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px;">
+        <div>
+            <h2>Booking #{{ booking.id }}</h2>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Placed on {{ booking.created_at|date:"M d, Y" }}</span>
+        </div>
+        <span class="status-pill status-{{ booking.status }}" style="font-size: 0.95rem; padding: 6px 14px;">
+            {{ booking.get_status_display }}
+        </span>
+    </div>
+
+    {% if booking.status == 'rejected' and booking.rejection_reason %}
+    <div class="reason-box" style="margin-bottom: 20px;">
+        <strong>Vendor's Rejection Note:</strong>
+        <p>{{ booking.rejection_reason }}</p>
+    </div>
+    {% endif %}
+
+    <div class="profile-field">
+        <span class="field-name">Service:</span>
+        <span class="field-value"><strong>{{ booking.service.name }}</strong> (₹{{ booking.service.price }})</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Vendor Business:</span>
+        <span class="field-value">{{ booking.vendor.business_name }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Vendor Contact:</span>
+        <span class="field-value">{{ booking.vendor.phone }} &bull; {{ booking.vendor.user.email }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Appointment Time:</span>
+        <span class="field-value">{{ booking.booking_date }} at {{ booking.booking_time|time:"g:i A" }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Vendor Address:</span>
+        <span class="field-value">{{ booking.vendor.business_address }}, {{ booking.vendor.city }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Your Notes:</span>
+        <span class="field-value">{{ booking.notes|default:"None" }}</span>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border);">
+        <a href="{% url 'customer:my_bookings' %}" class="btn btn-secondary">&larr; Back to My Bookings</a>
+
+        {% if booking.status == 'pending' %}
+        <!-- Custom Confirmation Action (no window popup) -->
+        <form method="POST" action="{% url 'customer:cancel_booking' booking.id %}" onsubmit="return confirm('Are you sure you want to cancel this booking request?');">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Cancel Booking Request</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

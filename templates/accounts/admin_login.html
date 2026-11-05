@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card" style="border-top: 4px solid var(--danger);">
+        <div class="auth-header">
+            <h2 class="auth-title">Administrative Portal</h2>
+            <p class="auth-subtitle">Authorized Staff Only</p>
+        </div>
+
+        <form method="POST" action="{% url 'accounts:admin_login' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label" for="id_username">Admin Username</label>
+                {{ form.username }}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="id_password">Admin Password</label>
+                {{ form.password }}
+            </div>
+
+            <button type="submit" class="btn btn-danger btn-block" style="margin-top: 10px;">Login to Control Panel</button>
+        </form>
+
+        <div class="auth-footer">
+            <a href="{% url 'home' %}">&larr; Return to Homepage</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

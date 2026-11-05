@@ -1,0 +1,63 @@
+{% extends 'vendor/vendor_base.html' %}
+
+{% block title %}My Services - LocalVendor{% endblock %}
+
+{% block content %}
+<div class="action-row">
+    <div>
+        <h2>Manage My Services</h2>
+        <p style="color: var(--text-muted);">List and maintain the services you offer to customers</p>
+    </div>
+    <a href="{% url 'vendor:add_service' %}" class="btn btn-primary">+ Add New Service</a>
+</div>
+
+{% if services %}
+<div class="table-responsive">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Service Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Duration</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in services %}
+            <tr>
+                <td><strong>{{ s.name }}</strong></td>
+                <td>{{ s.category.name }}</td>
+                <td>₹{{ s.price }}</td>
+                <td>{{ s.duration_minutes }} mins</td>
+                <td>
+                    {% if s.is_available %}
+                        <span class="status-pill status-active">Available</span>
+                    {% else %}
+                        <span class="status-pill status-inactive">Hidden</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div style="display: flex; gap: 8px;">
+                        <a href="{% url 'vendor:edit_service' s.id %}" class="btn btn-secondary btn-sm">Edit</a>
+                        <form method="POST" action="{% url 'vendor:delete_service' s.id %}" onsubmit="return confirm('Delete this service permanently?');" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="card" style="text-align: center; padding: 40px; color: var(--text-muted);">
+    <h3>No services added yet.</h3>
+    <p>Add your first service so local customers can view and book with you!</p>
+    <a href="{% url 'vendor:add_service' %}" class="btn btn-primary" style="margin-top: 15px;">Add Service Now</a>
+</div>
+{% endif %}
+{% endblock %}
+

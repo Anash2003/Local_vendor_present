@@ -1,0 +1,60 @@
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}Vendor Working Schedules - Control Center{% endblock %}
+
+{% block admin_body %}
+<div class="action-row">
+    <div>
+        <h2>Vendor Operating Hours & Availability</h2>
+        <p style="color: var(--text-muted);">Monitor working days configured by approved vendor partners</p>
+    </div>
+</div>
+
+<form method="GET" class="filter-bar">
+    <select name="vendor" class="form-select" onchange="this.form.submit()">
+        <option value="">All Approved Vendors</option>
+        {% for v in vendors %}
+            <option value="{{ v.id }}" {% if selected_vendor == v.id|stringformat:"s" %}selected{% endif %}>{{ v.business_name }}</option>
+        {% endfor %}
+    </select>
+    {% if selected_vendor %}
+        <a href="{% url 'custom_admin:availability_list' %}" class="btn btn-secondary btn-sm">Reset</a>
+    {% endif %}
+</form>
+
+{% if availabilities %}
+<div class="table-responsive">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Vendor</th>
+                <th>Day of Week</th>
+                <th>Working Hours</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in availabilities %}
+            <tr>
+                <td><strong>{{ a.vendor.business_name }}</strong></td>
+                <td><span class="day-badge">{{ a.get_day_of_week_display }}</span></td>
+                <td>{{ a.start_time|time:"g:i A" }} - {{ a.end_time|time:"g:i A" }}</td>
+                <td>
+                    {% if a.is_available %}
+                        <span class="status-pill status-active">Available</span>
+                    {% else %}
+                        <span class="status-pill status-inactive">Closed</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="card" style="text-align: center; padding: 40px; color: var(--text-muted);">
+    <h3>No availability schedules found.</h3>
+</div>
+{% endif %}
+{% endblock %}
+

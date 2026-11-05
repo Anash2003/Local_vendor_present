@@ -1,0 +1,49 @@
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}Pending Vendor Approvals - Control Center{% endblock %}
+
+{% block admin_body %}
+<div class="action-row">
+    <div>
+        <h2>Pending Vendor Approvals</h2>
+        <p style="color: var(--text-muted);">Verify uploaded KYC / verification records before granting dashboard privileges</p>
+    </div>
+</div>
+
+{% if vendors %}
+<div class="table-responsive">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Registration Date</th>
+                <th>Business Name</th>
+                <th>Owner Details</th>
+                <th>Location</th>
+                <th>Contact</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for v in vendors %}
+            <tr>
+                <td>{{ v.created_at|date:"M d, Y" }}</td>
+                <td><strong>{{ v.business_name }}</strong></td>
+                <td>{{ v.user.get_full_name }} ({{ v.user.username }})</td>
+                <td>{{ v.city }}, {{ v.state }}</td>
+                <td>{{ v.phone }}</td>
+                <td>
+                    <a href="{% url 'custom_admin:vendor_detail' v.id %}" class="btn btn-primary btn-sm">Review & Verify</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="card" style="text-align: center; padding: 40px; color: var(--text-muted);">
+    <h3>All caught up!</h3>
+    <p>There are no vendor registration applications awaiting verification.</p>
+</div>
+{% endif %}
+{% endblock %}
+

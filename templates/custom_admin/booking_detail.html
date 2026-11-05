@@ -1,0 +1,49 @@
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}Booking #{{ booking.id }} Audit - Control Center{% endblock %}
+
+{% block admin_body %}
+<div class="card" style="max-width: 750px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px;">
+        <div>
+            <h2>Booking Audit #{{ booking.id }}</h2>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Created on {{ booking.created_at|date:"M d, Y H:i" }}</span>
+        </div>
+        <span class="status-pill status-{{ booking.status }}" style="font-size: 0.95rem; padding: 6px 14px;">
+            {{ booking.get_status_display }}
+        </span>
+    </div>
+
+    <div class="profile-field">
+        <span class="field-name">Customer:</span>
+        <span class="field-value">{{ booking.customer.user.get_full_name }} ({{ booking.customer.user.username }}) - Phone: {{ booking.customer.phone }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Vendor:</span>
+        <span class="field-value"><strong>{{ booking.vendor.business_name }}</strong> (Owner: {{ booking.vendor.user.username }}) - Phone: {{ booking.vendor.phone }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Service:</span>
+        <span class="field-value">{{ booking.service.name }} (₹{{ booking.service.price }})</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Scheduled For:</span>
+        <span class="field-value">{{ booking.booking_date }} at {{ booking.booking_time|time:"g:i A" }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Customer Notes:</span>
+        <span class="field-value">{{ booking.notes|default:"None" }}</span>
+    </div>
+    {% if booking.rejection_reason %}
+    <div class="profile-field">
+        <span class="field-name">Rejection Reason:</span>
+        <span class="field-value" style="color: var(--danger);">{{ booking.rejection_reason }}</span>
+    </div>
+    {% endif %}
+
+    <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid var(--border);">
+        <a href="{% url 'custom_admin:booking_list' %}" class="btn btn-secondary btn-sm">&larr; Back to Booking Audit Log</a>
+    </div>
+</div>
+{% endblock %}
+

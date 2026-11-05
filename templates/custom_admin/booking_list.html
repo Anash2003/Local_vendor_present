@@ -1,0 +1,66 @@
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}Manage Bookings - Control Center{% endblock %}
+
+{% block admin_body %}
+<div class="action-row">
+    <div>
+        <h2>Master Booking Records</h2>
+        <p style="color: var(--text-muted);">Audit all service transactions across customers and vendors</p>
+    </div>
+</div>
+
+<form method="GET" class="filter-bar">
+    <input type="text" name="search" class="form-input" placeholder="Search by customer or vendor..." value="{{ search }}">
+    <select name="status" class="form-select">
+        <option value="">All Statuses</option>
+        <option value="pending" {% if selected_status == 'pending' %}selected{% endif %}>Pending</option>
+        <option value="confirmed" {% if selected_status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+        <option value="completed" {% if selected_status == 'completed' %}selected{% endif %}>Completed</option>
+        <option value="rejected" {% if selected_status == 'rejected' %}selected{% endif %}>Rejected</option>
+        <option value="cancelled" {% if selected_status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+    </select>
+    <button type="submit" class="btn btn-primary">Filter</button>
+    {% if search or selected_status %}
+        <a href="{% url 'custom_admin:booking_list' %}" class="btn btn-secondary">Reset</a>
+    {% endif %}
+</form>
+
+{% if bookings %}
+<div class="table-responsive">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Booking ID</th>
+                <th>Customer</th>
+                <th>Vendor</th>
+                <th>Service</th>
+                <th>Date & Time</th>
+                <th>Status</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for b in bookings %}
+            <tr>
+                <td>#{{ b.id }}</td>
+                <td>{{ b.customer.user.username }}</td>
+                <td><strong>{{ b.vendor.business_name }}</strong></td>
+                <td>{{ b.service.name }}</td>
+                <td>{{ b.booking_date }} at {{ b.booking_time|time:"g:i A" }}</td>
+                <td><span class="status-pill status-{{ b.status }}">{{ b.status }}</span></td>
+                <td>
+                    <a href="{% url 'custom_admin:booking_detail' b.id %}" class="btn btn-secondary btn-sm">Inspect</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="card" style="text-align: center; padding: 40px; color: var(--text-muted);">
+    <h3>No bookings match query.</h3>
+</div>
+{% endif %}
+{% endblock %}
+

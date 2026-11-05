@@ -1,0 +1,78 @@
+{% extends 'customer/customer_base.html' %}
+
+{% block title %}Customer Dashboard - LocalVendor{% endblock %}
+
+{% block content %}
+<div class="customer-hero">
+    <h1>Welcome, {{ user.first_name }}!</h1>
+    <p>Find trusted local technicians, cleaners, plumbers, and more in your area.</p>
+    <div style="margin-top: 15px;">
+        <a href="{% url 'customer:browse_services' %}" class="btn btn-secondary">Explore All Services</a>
+        <a href="{% url 'customer:browse_vendors' %}" class="btn btn-primary" style="background: white; color: var(--primary);">Find Vendors</a>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <span class="stat-label">Total Bookings</span>
+        <span class="stat-value">{{ total_bookings }}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Pending Confirmation</span>
+        <span class="stat-value" style="color: var(--warning);">{{ pending_bookings }}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Confirmed Bookings</span>
+        <span class="stat-value" style="color: var(--success);">{{ confirmed_bookings }}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Completed Services</span>
+        <span class="stat-value" style="color: var(--secondary);">{{ completed_bookings }}</span>
+    </div>
+</div>
+
+<div class="card" style="margin-top: 25px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 class="card-title" style="margin-bottom: 0;">Recent Bookings</h3>
+        <a href="{% url 'customer:my_bookings' %}" class="btn btn-secondary btn-sm">View All Bookings</a>
+    </div>
+
+    {% if recent_bookings %}
+    <div class="table-responsive" style="margin-top: 0;">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Vendor</th>
+                    <th>Service</th>
+                    <th>Date & Time</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for b in recent_bookings %}
+                <tr>
+                    <td>#{{ b.id }}</td>
+                    <td><strong>{{ b.vendor.business_name }}</strong></td>
+                    <td>{{ b.service.name }}</td>
+                    <td>{{ b.booking_date }} at {{ b.booking_time|time:"g:i A" }}</td>
+                    <td>
+                        <span class="status-pill status-{{ b.status }}">{{ b.get_status_display }}</span>
+                    </td>
+                    <td>
+                        <a href="{% url 'customer:booking_detail' b.id %}" class="btn btn-secondary btn-sm">Details</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="card-text" style="text-align: center; padding: 30px; color: var(--text-muted);">
+        You haven't made any bookings yet. <a href="{% url 'customer:browse_services' %}">Browse services</a> to place your first booking!
+    </p>
+    {% endif %}
+</div>
+{% endblock %}
+

@@ -1,0 +1,54 @@
+{% extends 'customer/customer_base.html' %}
+
+{% block title %}Browse Services - LocalVendor{% endblock %}
+
+{% block content %}
+<div class="action-row">
+    <div>
+        <h2>Explore Available Services</h2>
+        <p style="color: var(--text-muted);">Choose from professional local services</p>
+    </div>
+</div>
+
+<form method="GET" class="filter-bar">
+    <input type="text" name="search" class="form-input" placeholder="Search service name..." value="{{ search }}">
+    <select name="category" class="form-select">
+        <option value="">All Categories</option>
+        {% for c in categories %}
+            <option value="{{ c.id }}" {% if selected_category == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary">Filter</button>
+    {% if search or selected_category %}
+        <a href="{% url 'customer:browse_services' %}" class="btn btn-secondary">Clear</a>
+    {% endif %}
+</form>
+
+{% if services %}
+<div class="cards-grid">
+    {% for s in services %}
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <h3 class="card-title">{{ s.name }}</h3>
+            <span style="font-weight: 700; color: var(--primary); font-size: 1.15rem;">₹{{ s.price }}</span>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px;">
+            Vendor: <strong>{{ s.vendor.business_name }}</strong> ({{ s.vendor.city }})
+        </p>
+        <span class="status-pill status-completed" style="margin-bottom: 12px;">{{ s.category.name }}</span>
+        <p class="card-text">{{ s.description|truncatewords:20 }}</p>
+        <div style="margin-top: 15px; display: flex; gap: 8px;">
+            <a href="{% url 'customer:vendor_detail' s.vendor.id %}" class="btn btn-secondary btn-sm" style="flex: 1;">Vendor Info</a>
+            <a href="{% url 'customer:book_service' s.id %}" class="btn btn-primary btn-sm" style="flex: 1;">Book Now</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card" style="text-align: center; padding: 40px; color: var(--text-muted);">
+    <h3>No services found.</h3>
+    <p>Try refining your search terms or category selection.</p>
+</div>
+{% endif %}
+{% endblock %}
+

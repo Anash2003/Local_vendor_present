@@ -1,0 +1,102 @@
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}{{ vendor.business_name }} - Inspection{% endblock %}
+
+{% block admin_body %}
+<div class="card" style="margin-bottom: 25px;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px;">
+        <div>
+            <h2>{{ vendor.business_name }}</h2>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Registered on {{ vendor.created_at|date:"M d, Y" }} &bull; Username: {{ vendor.user.username }}</span>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <span class="status-pill status-{{ vendor.verification_status }}" style="font-size: 0.9rem; padding: 5px 12px;">{{ vendor.get_verification_status_display }}</span>
+            <a href="{% url 'custom_admin:vendor_edit' vendor.id %}" class="btn btn-secondary btn-sm">Edit Details</a>
+        </div>
+    </div>
+
+    <!-- Verification / Decision Panel -->
+    <div style="background: var(--bg-main); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 18px; margin-bottom: 20px;">
+        <h4 style="margin-bottom: 10px;">Verification Decision</h4>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+            {% if vendor.verification_status != 'approved' %}
+            <form method="POST" action="{% url 'custom_admin:approve_vendor' vendor.id %}" onsubmit="return confirm('Approve this vendor? They will be granted immediate access to their vendor dashboard.');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">✅ Approve Application</button>
+            </form>
+            {% endif %}
+
+            {% if vendor.verification_status != 'rejected' %}
+            <button type="button" class="btn btn-danger" onclick="document.getElementById('admin-reject-box').style.display='block'">❌ Reject Application</button>
+            {% endif %}
+
+            <form method="POST" action="{% url 'custom_admin:toggle_vendor_status' vendor.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-secondary">
+                    {% if vendor.is_active_vendor %}Suspend Account{% else %}Re-activate Account{% endif %}
+                </button>
+            </form>
+        </div>
+
+        <div id="admin-reject-box" style="display: none; margin-top: 15px; background: white; padding: 15px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+            <form method="POST" action="{% url 'custom_admin:reject_vendor' vendor.id %}">
+                {% csrf_token %}
+                <label class="form-label">Reason for rejection (shown to vendor upon login):</label>
+                {{ rejection_form.rejection_reason }}
+                <div style="margin-top: 10px; display: flex; gap: 10px;">
+                    <button type="submit" class="btn btn-danger btn-sm">Confirm Rejection</button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('admin-reject-box').style.display='none'">Dismiss</button>
+                </div>
+            </form>
+        </div>
+
+        {% if vendor.verification_status == 'rejected' and vendor.rejection_reason %}
+        <div class="reason-box" style="margin-top: 12px;">
+            <strong>Current Stated Reason for Rejection:</strong> {{ vendor.rejection_reason }}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Uploaded Documents Preview Section -->
+    <h3 style="margin: 20px 0 12px 0;">Submitted KYC Documents</h3>
+    {% if documents %}
+        <div>
+            {% for d in documents %}
+            <div class="doc-preview-card">
+                <div>
+                    <strong>📄 {{ d.get_document_type_display }}</strong>
+                    <span style="font-size: 0.8rem; color: var(--text-muted); margin-left: 10px;">Uploaded {{ d.uploaded_at|date:"M d, Y" }}</span>
+                </div>
+                <a href="{% url 'custom_admin:view_document' d.id %}" target="_blank" class="btn btn-secondary btn-sm">🔒 Open & Inspect File</a>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="color: var(--text-muted);">No documents uploaded for this vendor.</p>
+    {% endif %}
+
+    <!-- Vendor Details -->
+    <h3 style="margin: 25px 0 12px 0;">Business & Owner Information</h3>
+    <div class="profile-field">
+        <span class="field-name">Owner Name:</span>
+        <span class="field-value">{{ vendor.user.get_full_name }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Email:</span>
+        <span class="field-value">{{ vendor.user.email }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Phone:</span>
+        <span class="field-value">{{ vendor.phone }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Address:</span>
+        <span class="field-value">{{ vendor.business_address }}, {{ vendor.city }}, {{ vendor.state }} - {{ vendor.pincode }}</span>
+    </div>
+    <div class="profile-field">
+        <span class="field-name">Description:</span>
+        <span class="field-value">{{ vendor.business_description|linebreaksbr|default:"None" }}</span>
+    </div>
+</div>
+{% endblock %}
+
